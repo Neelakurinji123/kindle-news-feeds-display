@@ -1,4 +1,4 @@
-#0,10,15,20,25,30,40,45,50,55 * * * * sh /mnt/us/timelit/timelit.sh
+#0,10,15,25,30,40,45,55 * * * * sh /mnt/us/timelit/timelit.sh
 #5,35 * * * * sh /mnt/us/kindle-weather/weather-script.sh
 20,50 * * * * sh /mnt/us/kindle-news-feeds/script.sh
 56 0,8,16 * * * sh /mnt/us/kindle-weather/update_time.sh
