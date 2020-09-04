@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<data>
+	<service name="station">
+		<template>bbc-news</template>
+                <subcategory>world</subcategory>
+                <encoding>iso-8859-1</encoding>
+		<font>Droid Sans</font>
+		<max_title_line_length>30</max_title_line_length>
+		<max_summary_line_length>38</max_summary_line_length>
+		<rows>3</rows>
+		<entry_number>4</entry_number>
+		<logo></logo>
+	</service>
+	<service name="env">
+		<duration_time>15</duration_time>
+                <repeat>5</repeat>
+                <display_reset>False</display_reset>
+	</service>
+</data>

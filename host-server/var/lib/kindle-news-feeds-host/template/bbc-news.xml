@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<data>
+	<station name="world">
+		<url>http://feeds.bbci.co.uk/news/world/rss.xml</url>
+	</station>
+	<station name="business">
+		<url>http://feeds.bbci.co.uk/news/business/rss.xml</url>
+	</station>
+	<station name="education">
+		<url>http://feeds.bbci.co.uk/news/education/rss.xml</url>
+	</station>
+	<station name="science_and_environment">
+		<url>http://feeds.bbci.co.uk/news/science_and_environment/rss.xml</url>
+	</station>
+	<station name="technology">
+		<url>http://feeds.bbci.co.uk/news/technology/rss.xml</url>
+	</station>
+	<station name="entertainment_and_arts">
+		<url>http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml</url>
+	</station>
+</data>

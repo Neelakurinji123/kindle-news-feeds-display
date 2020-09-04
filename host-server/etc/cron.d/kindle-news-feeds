@@ -1,0 +1,1 @@
+15,45 * * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh"
