@@ -36,7 +36,7 @@ This repo is display bbc news feeds on old kindle 3
     apt install imagemagick imagemagick-6-common imagemagick-6.q16 \
       imagemagick-common libgraphicsmagick-q16-3 libmagickcore-6.q16-6 \
       libmagickcore-6.q16-6-extra libmagickwand-6.q16-6 pngcrush potrace
-potrace
+
     web server:
     apt install nginx-light
 
