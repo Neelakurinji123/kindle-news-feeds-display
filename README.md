@@ -49,7 +49,7 @@ potrace
     font:
     apt install fontconfig
 
-    exract archive and copy ttf font to /root/.fonts folder
+    extract a ttf archive and copy ttf fonts to /root/.fonts folder
     fc-cache -v -f
 ```
 
