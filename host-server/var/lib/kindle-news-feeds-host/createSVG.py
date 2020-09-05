@@ -101,14 +101,18 @@ def build_source(NewsFeed, title, summary, entry_number, rows):
         entry = NewsFeed.entries[i]
         for k, v in entry.items():
             if k == 'summary':
-                #entry[k] = re.sub(r'"', '\'', entry[k])
                 entry[k] = entry[k].replace("\"", "\'")
                 entry[k] = entry[k].replace(u"\u2019", "\'")
+                #entry[k] = entry[k].replace("\'", "&apos;")
+                #entry[k] = entry[k].replace("\"", "&quot;")
+                #entry[k] = entry[k].replace(u"\u2019", "&apos;")
                 news['summary'] = summary.proccessing(entry[k])
             elif k == 'title':
-                #entry[k] = re.sub(r'"', '\'', entry[k])
                 entry[k] = entry[k].replace("\"", "\'")
                 entry[k] = entry[k].replace(u"\u2019", "\'")
+                #entry[k] = entry[k].replace(u"\u2019", "&apos;")
+                #entry[k] = entry[k].replace("\'", "&apos;")
+                #entry[k] = entry[k].replace("\"", "&quot;")
                 news['title'] = title.proccessing(entry[k])
             elif k == 'published':
                 news['published'] = entry[k]
@@ -128,11 +132,11 @@ def build_source(NewsFeed, title, summary, entry_number, rows):
                     args4 = ['convert',  '-size', '600x', '-background', 'white', '-depth', '8' ,file3, file4]
 
                     output = Popen(args1)
-                    time.sleep(3)
+                    time.sleep(5)
                     output = Popen(args2)
-                    time.sleep(3)
+                    time.sleep(5)
                     output = Popen(args3)
-                    time.sleep(3)
+                    time.sleep(5)
                     output = Popen(args4)
 
                     doc = minidom.parse(file3)
@@ -162,6 +166,7 @@ def create_svg(news, filename):
     # head
     svg_file.write('<text style="text-anchor:start;" font-size="30px" x="20" y="38">')
     svg_file.write(news['head'].replace('&', 'and'))
+    #svg_file.write(news['head'].replace('&', '&amp;'))
     svg_file.write('</text>\n')
 
     # logo
@@ -172,12 +177,20 @@ def create_svg(news, filename):
     svg_file.write('<line x1="10" x2="590" y1="45" y2="45" style="fill:none;stroke:black;stroke-width:1px;"/>' + '\n')
 
     # title
-    n = 100
-    for p in news['title']:
+#    n = 100
+#    for p in news['title']:
+#        svg_file.write('<text style="text-anchor:start;" font-size="40px" x="20" y="' + str(n) + '">')
+#        svg_file.write(p)
+#        svg_file.write('</text>\n')
+#        n += 50
+
+    n = 210
+    for p in reversed(list(news['title'])):
+        #svg_file.write("<text style='text-anchor:start;' font-size='40px' x='20' y='" + str(n) + "'>")
         svg_file.write('<text style="text-anchor:start;" font-size="40px" x="20" y="' + str(n) + '">')
         svg_file.write(p)
         svg_file.write('</text>\n')
-        n += 50
+        n -= 50
 
     # published
     n = 275
@@ -186,8 +199,9 @@ def create_svg(news, filename):
     svg_file.write('</text>\n')
 
     # summary
-    n = 350
+    n = 340
     for p in news['summary']:
+        #svg_file.write("<text style='text-anchor:start;' font-size='30px' x='25' y='" + str(n) + "'>")
         svg_file.write('<text style="text-anchor:start;" font-size="30px" x="25" y="' + str(n) + '">')
         svg_file.write(p)
         svg_file.write('</text>\n')
