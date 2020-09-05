@@ -235,11 +235,6 @@ for news in news_data:
     output = Popen(args)
     i += 1
 
-
-#gm convert -size 600x800 -background white -depth 8 -resize 600x800 \
-#    -colorspace gray -type palette -geometry 600x800 \
-#    $OUTPUT_DIR/ieroStation.svg $OUTPUT_DIR/kindleStation.png
-
 # create control file
 control_file = working_dir2 + 'control.env'
 
