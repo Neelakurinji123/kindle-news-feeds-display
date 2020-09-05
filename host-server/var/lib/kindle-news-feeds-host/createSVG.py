@@ -101,18 +101,16 @@ def build_source(NewsFeed, title, summary, entry_number, rows):
         entry = NewsFeed.entries[i]
         for k, v in entry.items():
             if k == 'summary':
-                entry[k] = entry[k].replace("\"", "\'")
+
+                # hmm, tricky problem...
+                entry[k] = entry[k].replace("\"", "\'\'")
+                entry[k] = entry[k].replace(u"\u2018", "\'")
                 entry[k] = entry[k].replace(u"\u2019", "\'")
-                #entry[k] = entry[k].replace("\'", "&apos;")
-                #entry[k] = entry[k].replace("\"", "&quot;")
-                #entry[k] = entry[k].replace(u"\u2019", "&apos;")
                 news['summary'] = summary.proccessing(entry[k])
             elif k == 'title':
-                entry[k] = entry[k].replace("\"", "\'")
+                entry[k] = entry[k].replace("\"", "\'\'")
+                entry[k] = entry[k].replace(u"\u2018", "\'")
                 entry[k] = entry[k].replace(u"\u2019", "\'")
-                #entry[k] = entry[k].replace(u"\u2019", "&apos;")
-                #entry[k] = entry[k].replace("\'", "&apos;")
-                #entry[k] = entry[k].replace("\"", "&quot;")
                 news['title'] = title.proccessing(entry[k])
             elif k == 'published':
                 news['published'] = entry[k]
@@ -174,20 +172,17 @@ def create_svg(news, filename):
     #svg_file.write("%s" % (maintenant))
     #svg_file.write('</text>\n')
 
+    # line
     svg_file.write('<line x1="10" x2="590" y1="45" y2="45" style="fill:none;stroke:black;stroke-width:1px;"/>' + '\n')
 
     # title
-#    n = 100
-#    for p in news['title']:
-#        svg_file.write('<text style="text-anchor:start;" font-size="40px" x="20" y="' + str(n) + '">')
-#        svg_file.write(p)
-#        svg_file.write('</text>\n')
-#        n += 50
-
     n = 210
     for p in reversed(list(news['title'])):
-        #svg_file.write("<text style='text-anchor:start;' font-size='40px' x='20' y='" + str(n) + "'>")
         svg_file.write('<text style="text-anchor:start;" font-size="40px" x="20" y="' + str(n) + '">')
+
+        # fix graphics processing bug
+        p = re.sub('^\'', '\'\'', p)
+        p = re.sub('\'$', '\'\'', p)
         svg_file.write(p)
         svg_file.write('</text>\n')
         n -= 50
@@ -201,8 +196,11 @@ def create_svg(news, filename):
     # summary
     n = 340
     for p in news['summary']:
-        #svg_file.write("<text style='text-anchor:start;' font-size='30px' x='25' y='" + str(n) + "'>")
         svg_file.write('<text style="text-anchor:start;" font-size="30px" x="25" y="' + str(n) + '">')
+
+        # fix graphics processing bug
+        p = re.sub('^\'', '\'\'', p)
+        p = re.sub('\'$', '\'\'', p)
         svg_file.write(p)
         svg_file.write('</text>\n')
         n += 40
@@ -232,9 +230,15 @@ for news in news_data:
     output_file = working_dir2 + 'entry' + str(i) + '.png'
     create_svg(news, filename)
 
-    args = ['convert', '-size', '600x800',  '-background', 'white', '-depth', '8', filename, output_file]
+    #args = ['convert', '-size', '600x800',  '-background', 'white', '-depth', '8', filename, output_file]
+    args = ['gm', 'convert', '-size', '600x800', '-background', 'white', '-depth', '8', '-resize', '600x800', '-colorspace', 'gray', '-type', 'palette', '-geometry', '600x800', filename, output_file]
     output = Popen(args)
     i += 1
+
+
+#gm convert -size 600x800 -background white -depth 8 -resize 600x800 \
+#    -colorspace gray -type palette -geometry 600x800 \
+#    $OUTPUT_DIR/ieroStation.svg $OUTPUT_DIR/kindleStation.png
 
 # create control file
 control_file = working_dir2 + 'control.env'
