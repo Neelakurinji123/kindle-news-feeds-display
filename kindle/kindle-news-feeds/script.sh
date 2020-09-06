@@ -36,7 +36,7 @@ run()
 }
 
 eips -c
-if [ -f '/tmp/news-feeds/entry0.pngz' ]; then
+if [ -f '/tmp/news-feeds/entry0.png' ]; then
     run
 else
     eips -g error.png
