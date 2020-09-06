@@ -44,7 +44,7 @@ This repo is display bbc news feeds on old kindle 3
     graphicsmagick:
     apt install graphicsmagick libgraphicsmagick++-q16-12 libgraphicsmagick-q16-3
 
-      EDIT: /usr/lib/GraphicsMagick-1.3.35/config/type.mgk
+    EDIT: /usr/lib/GraphicsMagick-1.3.35/config/type.mgk
       
 <?xml version="1.0"?>
 <typemap>
@@ -52,7 +52,7 @@ This repo is display bbc news feeds on old kindle 3
   <include file="type-kindle.mgk" /> 
 </typemap>
 
-      ADD: /usr/lib/GraphicsMagick-1.3.35/config/type-kindle.mgk
+    ADD: /usr/lib/GraphicsMagick-1.3.35/config/type-kindle.mgk
        
 <?xml version="1.0"?>
 <typemap>
