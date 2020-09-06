@@ -13,7 +13,8 @@ from subprocess import Popen
 import time
 import os
 from xml.dom import minidom
-
+from PIL import ImageFont
+import fontconfig
 
 # working directory
 working_dir = '/tmp/wk_images/'
@@ -30,15 +31,21 @@ for service in root.findall('service'):
         subcategory = service.find('subcategory').text
         encoding = service.find('encoding').text
         font = service.find('font').text
-        max_title_line_length = int(service.find('max_title_line_length').text)
-        max_summary_line_length = int(service.find('max_summary_line_length').text)
-        rows = int(service.find('rows').text)
-        entry_number = int(service.find('entry_number').text)
+        title_font_size = service.find('title_font_size').text
+        summary_font_size = service.find('summary_font_size').text
+        rows = service.find('rows').text
+        entry_number = service.find('entry_number').text
         logo = service.find('logo').text
     elif service.get('name') == 'env':
         duration_time = service.find('duration_time').text
         repeat = service.find('repeat').text
         display_reset = service.find('display_reset').text
+
+# font path
+fonts = fontconfig.query(family=font,lang='en')
+for i in range(0, len(fonts)):
+    if fonts[i].style[0][1] == 'Regular':
+        f_path = fonts[i].file
 
 
 # parse template file
@@ -53,9 +60,10 @@ for station in root.findall('station'):
 NewsFeed = feedparser.parse(url)
 
 class WordProccessing:
-    def __init__(self, length, rows):
-        self.length = length
-        self.rows = rows
+    def __init__(self, length, rows, f_path, f_size):
+        self.length = int(length)
+        self.rows = int(rows)
+        self.font = ImageFont.truetype(f_path, int(f_size))
 
     def proccessing(self, val):
 
@@ -68,34 +76,34 @@ class WordProccessing:
         line = ''
         word_count = len(words)
         for n in words:
-            if (len(line) + len(n)) <= self.length and word_count == 1:
+            if self.font.getsize(line + n)[0] <= self.length and word_count == 1:
                 line += n
                 word_count = -1
                 yield line
-            elif (len(line) + len(n) + 1) <= self.length and word_count > 0 and row_count < self.rows:
+            elif self.font.getsize(line + n)[0] <= self.length and word_count > 0 and row_count < self.rows:
                 line += n + ' '
                 word_count -= 1
-            elif (len(line) + len(n) + 1) > self.length and word_count > 0 and row_count < self.rows:
+            elif self.font.getsize(line + n)[0] > self.length and word_count > 0 and row_count < self.rows:
                 word_count -= 1
                 row_count += 1
                 yield line
                 line = n + ' '
-            elif (len(line) + len(n) + 1 - 3) <= self.length and word_count > 0 and row_count == self.rows:
+            elif (self.font.getsize((line + n)[0:-1])[0] - self.font.getsize('...')[0]) <= self.length and word_count > 0 and row_count == self.rows:
                 line += n + ' '
                 word_count -= 1
-            elif (len(line) + len(n) + 1 - 3) > self.length and word_count > 0 and row_count == self.rows:
+            elif (self.font.getsize((line + n)[0:-1])[0] - self.font.getsize('...')[0]) > self.length and word_count > 0 and row_count == self.rows:
                 line = line[0:-1] + '...'
                 word_count = -1
                 yield line
 
+n = 550
+summary = WordProccessing(n, rows, f_path, summary_font_size)
+title = WordProccessing(n, rows, f_path, title_font_size)
 
-summary = WordProccessing(max_summary_line_length, rows)
-title = WordProccessing(max_title_line_length, rows)
-
-def build_source(NewsFeed, title, summary, entry_number, rows):
+def build_source(NewsFeed, title, summary, entry_number):
     data = list()
     news = dict()
-    for i in range(0, entry_number):
+    for i in range(0, int(entry_number)):
         news['head'] = NewsFeed.feed['title']
         news['logo'] = logo
         entry = NewsFeed.entries[i]
@@ -178,7 +186,7 @@ def create_svg(news, filename):
     # title
     n = 210
     for p in reversed(list(news['title'])):
-        svg_file.write('<text style="text-anchor:start;" font-size="40px" x="20" y="' + str(n) + '">')
+        svg_file.write('<text style="text-anchor:start;" font-size="' + title_font_size + 'px" x="20" y="' + str(n) + '">')
 
         # fix graphics processing bug
         p = re.sub('^\'', '\'\'', p)
@@ -196,7 +204,7 @@ def create_svg(news, filename):
     # summary
     n = 340
     for p in news['summary']:
-        svg_file.write('<text style="text-anchor:start;" font-size="30px" x="25" y="' + str(n) + '">')
+        svg_file.write('<text style="text-anchor:start;" font-size="' + summary_font_size + 'px" x="25" y="' + str(n) + '">')
 
         # fix graphics processing bug
         p = re.sub('^\'', '\'\'', p)
@@ -216,7 +224,7 @@ def create_svg(news, filename):
     svg_file.close()
 
 
-news_data = build_source(NewsFeed, title, summary, entry_number, rows)
+news_data = build_source(NewsFeed, title, summary, entry_number)
 
 # image processing
 
@@ -234,6 +242,11 @@ for news in news_data:
     args = ['gm', 'convert', '-size', '600x800', '-background', 'white', '-depth', '8', '-resize', '600x800', '-colorspace', 'gray', '-type', 'palette', '-geometry', '600x800', filename, output_file]
     output = Popen(args)
     i += 1
+
+
+#gm convert -size 600x800 -background white -depth 8 -resize 600x800 \
+#    -colorspace gray -type palette -geometry 600x800 \
+#    $OUTPUT_DIR/ieroStation.svg $OUTPUT_DIR/kindleStation.png
 
 # create control file
 control_file = working_dir2 + 'control.env'

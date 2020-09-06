@@ -5,8 +5,8 @@
                 <subcategory>world</subcategory>
                 <encoding>iso-8859-1</encoding>
 		<font>Droid Sans</font>
-		<max_title_line_length>29</max_title_line_length>
-		<max_summary_line_length>40</max_summary_line_length>
+		<title_font_size>40</title_font_size>
+		<summary_font_size>30</summary_font_size>
 		<rows>3</rows>
 		<entry_number>4</entry_number>
 		<logo></logo>
