@@ -66,35 +66,39 @@ class WordProccessing:
         self.font = ImageFont.truetype(f_path, int(f_size))
 
     def proccessing(self, val):
-
         words = list()
-        for p in re.split(" +", val):
-            words += [p]
+        for s in re.split(" +", val):
+            words += [s]
 
         row = 0
         row_count = 1
-        line = ''
+        line = str()
         word_count = len(words)
-        for n in words:
-            if self.font.getsize(line + n)[0] <= self.length and word_count == 1:
-                line += n
-                word_count = -1
+
+        for s in words:
+            if self.font.getsize(line + s)[0] <= self.length and word_count == 1:
+                line += s
+                word_count = 0
                 yield line
-            elif self.font.getsize(line + n)[0] <= self.length and word_count > 0 and row_count < self.rows:
-                line += n + ' '
+            elif self.font.getsize(line + s)[0] <= self.length and word_count > 1 and row_count <= self.rows:
+                line += s + ' '
                 word_count -= 1
-            elif self.font.getsize(line + n)[0] > self.length and word_count > 0 and row_count < self.rows:
+            elif self.font.getsize(line + s)[0] > self.length and word_count > 1 and row_count <= self.rows:
                 word_count -= 1
                 row_count += 1
-                yield line
-                line = n + ' '
-            elif (self.font.getsize((line + n)[0:-1])[0] - self.font.getsize('...')[0]) <= self.length and word_count > 0 and row_count == self.rows:
-                line += n + ' '
+                yield line[0:-1]
+                line = s + ' '
+            elif (self.font.getsize(line + s)[0] - self.font.getsize('...')[0]) <= self.length and word_count > 1 and row_count == self.rows:
+                line += s + ' '
                 word_count -= 1
-            elif (self.font.getsize((line + n)[0:-1])[0] - self.font.getsize('...')[0]) > self.length and word_count > 0 and row_count == self.rows:
+            elif (self.font.getsize(line + s)[0] - self.font.getsize('...')[0]) > self.length and word_count > 1 and row_count == self.rows:
                 line = line[0:-1] + '...'
-                word_count = -1
+                word_count = 0
                 yield line
+            # something wrong with the logic
+            else:
+                yield line
+                line = str()
 
 n = 550
 summary = WordProccessing(n, rows, f_path, summary_font_size)
@@ -159,8 +163,6 @@ def build_source(NewsFeed, title, summary, entry_number):
 
 
 # Create SVG file
-encoding = 'iso-8859-1'
-font = 'Droid Sans'
 def create_svg(news, filename):
 
     svg_file = open(filename,"w", encoding=encoding)
@@ -172,7 +174,6 @@ def create_svg(news, filename):
     # head
     svg_file.write('<text style="text-anchor:start;" font-size="30px" x="20" y="38">')
     svg_file.write(news['head'].replace('&', 'and'))
-    #svg_file.write(news['head'].replace('&', '&amp;'))
     svg_file.write('</text>\n')
 
     # logo
@@ -185,13 +186,13 @@ def create_svg(news, filename):
 
     # title
     n = 210
-    for p in reversed(list(news['title'])):
+    for s in reversed(list(news['title'])):
         svg_file.write('<text style="text-anchor:start;" font-size="' + title_font_size + 'px" x="20" y="' + str(n) + '">')
 
         # fix graphics processing bug
-        p = re.sub('^\'', '\'\'', p)
-        p = re.sub('\'$', '\'\'', p)
-        svg_file.write(p)
+        s = re.sub('^\'', '\'\'', s)
+        s = re.sub('\'$', '\'\'', s)
+        if s != '': svg_file.write(s)
         svg_file.write('</text>\n')
         n -= 50
 
@@ -203,21 +204,21 @@ def create_svg(news, filename):
 
     # summary
     n = 340
-    for p in news['summary']:
+    for s in news['summary']:
         svg_file.write('<text style="text-anchor:start;" font-size="' + summary_font_size + 'px" x="25" y="' + str(n) + '">')
 
         # fix graphics processing bug
-        p = re.sub('^\'', '\'\'', p)
-        p = re.sub('\'$', '\'\'', p)
-        svg_file.write(p)
+        s = re.sub('^\'', '\'\'', s)
+        s = re.sub('\'$', '\'\'', s)
+        svg_file.write(s)
         svg_file.write('</text>\n')
         n += 40
 
     svg_file.write('</g>\n')
     # image
     svg_file.write('<g transform="translate(0.000000,800.000000) scale(0.100000,-0.100000)" fill="#000000" stroke="none">\n')
-    for p in news['img']:
-        svg_file.write('<path d="' + p + '"/>\n')
+    for s in news['img']:
+        svg_file.write('<path d="' + s + '"/>\n')
 
     svg_file.write('</g>\n')
     svg_file.write('</svg>')
