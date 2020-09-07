@@ -71,34 +71,35 @@ class WordProccessing:
             words += [s]
 
         row = 0
-        row_count = 1
+        row_counter = 1
         line = str()
-        word_count = len(words)
+        word_counter = len(words)
 
         for s in words:
-            if self.font.getsize(line + s)[0] <= self.length and word_count == 1:
+            if self.font.getsize(line + s)[0] <= self.length and word_counter == 1:
                 line += s
-                word_count = 0
+                word_counter = 0
                 yield line
-            elif self.font.getsize(line + s)[0] <= self.length and word_count > 1 and row_count <= self.rows:
+            elif self.font.getsize(line + s)[0] <= self.length and word_counter > 1 and row_counter < self.rows:
                 line += s + ' '
-                word_count -= 1
-            elif self.font.getsize(line + s)[0] > self.length and word_count > 1 and row_count <= self.rows:
-                word_count -= 1
-                row_count += 1
+                word_counter -= 1
+            elif self.font.getsize(line + s)[0] > self.length and word_counter > 1 and row_counter < self.rows:
+                word_counter -= 1
+                row_counter += 1
                 yield line[0:-1]
                 line = s + ' '
-            elif (self.font.getsize(line + s)[0] - self.font.getsize('...')[0]) <= self.length and word_count > 1 and row_count == self.rows:
+            elif (self.font.getsize(line + s)[0] - self.font.getsize('...')[0]) <= self.length and word_counter > 1 and row_counter == self.rows:
                 line += s + ' '
-                word_count -= 1
-            elif (self.font.getsize(line + s)[0] - self.font.getsize('...')[0]) > self.length and word_count > 1 and row_count == self.rows:
+                word_counter -= 1
+            elif (self.font.getsize(line + s)[0] - self.font.getsize('...')[0]) > self.length and word_counter > 1 and row_counter == self.rows:
                 line = line[0:-1] + '...'
-                word_count = 0
+                word_counter = 0
                 yield line
             # something wrong with the logic
             else:
                 yield line
-                line = str()
+                if word_counter == 1:
+                    yield s   # last word
 
 n = 550
 summary = WordProccessing(n, rows, f_path, summary_font_size)
