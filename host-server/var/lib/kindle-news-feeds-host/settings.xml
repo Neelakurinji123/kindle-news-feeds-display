@@ -12,7 +12,7 @@
 		<logo></logo>
 	</service>
 	<service name="env">
-		<duration_time>15</duration_time>
+		<duration_time>14</duration_time>
                 <repeat>5</repeat>
                 <display_reset>False</display_reset>
 	</service>
