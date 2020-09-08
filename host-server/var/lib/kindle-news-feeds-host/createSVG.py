@@ -3,32 +3,39 @@
 # -*- coding: utf-8 -*-
 
 import json
-import requests
-import xml.etree.ElementTree as ET
-import feedparser
-import re
-from lxml import html
-from html.parser import HTMLParser
-from subprocess import Popen
 import time
 import os
+import sys
+import re
+import requests
+import feedparser
+import xml.etree.ElementTree as ET
+from subprocess import Popen
+from lxml import html
+from html.parser import HTMLParser
 from xml.dom import minidom
-from PIL import ImageFont
 import fontconfig
+from PIL import ImageFont
 
 # working directory
 working_dir = '/tmp/wk_images/'
 if os.path.isdir(working_dir) == False: os.makedirs(working_dir)
 
 # parse settings file
-params_file="settings.xml"
+
+# if using custom settings.xml, explicitly add a setting file on the commandline.
+if len(sys.argv) > 1:
+    params_file = sys.argv[1]
+else:
+    params_file = "settings.xml"
+
 tree = ET.parse(params_file)
 root = tree.getroot()
 
 for service in root.findall('service'):
     if service.get('name') == 'station':
         template = service.find('template').text
-        subcategory = service.find('subcategory').text
+        category = service.find('category').text
         encoding = service.find('encoding').text
         font = service.find('font').text
         title_font_size = service.find('title_font_size').text
@@ -54,7 +61,7 @@ tree = ET.parse(template_file)
 root = tree.getroot()
 
 for station in root.findall('station'):
-    if station.get('name') == subcategory :
+    if station.get('name') == category :
         url = station.find('url').text
 
 NewsFeed = feedparser.parse(url)
