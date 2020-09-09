@@ -23,7 +23,7 @@ if os.path.isdir(working_dir) == False: os.makedirs(working_dir)
 
 # parse settings file
 
-# if using custom settings.xml, explicitly add a setting file on the commandline.
+# if using custom settings.xml, add a setting file on the commandline.
 if len(sys.argv) > 1:
     params_file = sys.argv[1]
 else:
