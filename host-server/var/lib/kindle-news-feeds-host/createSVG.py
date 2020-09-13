@@ -79,6 +79,11 @@ class WordProccessing:
 
     def proccessing(self, val):
         words = list()
+
+        # remove a garbage
+        val = re.sub('<.*$', '', val)
+        print('test', val)
+
         for s in re.split(" +", val):
             words += [s]
 
