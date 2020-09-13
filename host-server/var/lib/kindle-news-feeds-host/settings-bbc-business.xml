@@ -2,7 +2,7 @@
 <data>
 	<service name="station">
 		<template>bbc-news</template>
-                <category>world</category>
+                <category>business</category>
                 <encoding>iso-8859-1</encoding>
 		<font>Droid Sans</font>
 		<title_font_size>40</title_font_size>

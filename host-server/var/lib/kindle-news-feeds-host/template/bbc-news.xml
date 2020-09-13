@@ -18,4 +18,8 @@
 	<station name="entertainment_and_arts">
 		<url>http://feeds.bbci.co.uk/news/entertainment_and_arts/rss.xml</url>
 	</station>
+
+        <image>
+                <img_path>//meta[@property='og:image']</img_path>
+        </image>
 </data>

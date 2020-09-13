@@ -1,19 +1,19 @@
 <?xml version="1.0"?>
 <data>
 	<service name="station">
-		<template>bbc-news</template>
-                <category>world</category>
+		<template>cnn-news</template>
+                <category>Football</category>
                 <encoding>iso-8859-1</encoding>
 		<font>Droid Sans</font>
 		<title_font_size>40</title_font_size>
 		<summary_font_size>30</summary_font_size>
 		<title_rows>3</title_rows>
-		<summary_rows>3</summary_rows>
-		<entry_number>4</entry_number>
+		<summary_rows>4</summary_rows>
+		<entry_number>3</entry_number>
 		<logo></logo>
 	</service>
 	<service name="env">
-		<duration_time>14</duration_time>
+		<duration_time>20</duration_time>
                 <repeat>5</repeat>
                 <display_reset>False</display_reset>
 	</service>

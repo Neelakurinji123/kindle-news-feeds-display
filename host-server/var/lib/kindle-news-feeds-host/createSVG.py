@@ -38,10 +38,11 @@ for service in root.findall('service'):
         category = service.find('category').text
         encoding = service.find('encoding').text
         font = service.find('font').text
-        title_font_size = service.find('title_font_size').text
-        summary_font_size = service.find('summary_font_size').text
-        rows = service.find('rows').text
-        entry_number = service.find('entry_number').text
+        title_font_size = int(service.find('title_font_size').text)
+        summary_font_size = int(service.find('summary_font_size').text)
+        title_rows = int(service.find('title_rows').text)
+        summary_rows = int(service.find('summary_rows').text)
+        entry_number = int(service.find('entry_number').text)
         logo = service.find('logo').text
     elif service.get('name') == 'env':
         duration_time = service.find('duration_time').text
@@ -64,13 +65,17 @@ for station in root.findall('station'):
     if station.get('name') == category :
         url = station.find('url').text
 
+# image path
+image = root.find('image')
+img_path = image.find('img_path').text
+
 NewsFeed = feedparser.parse(url)
 
 class WordProccessing:
     def __init__(self, length, rows, f_path, f_size):
         self.length = int(length)
         self.rows = int(rows)
-        self.font = ImageFont.truetype(f_path, int(f_size))
+        self.font = ImageFont.truetype(f_path, f_size)
 
     def proccessing(self, val):
         words = list()
@@ -95,27 +100,28 @@ class WordProccessing:
                 row_counter += 1
                 yield line[0:-1]
                 line = s + ' '
-            elif (self.font.getsize(line + s)[0] - self.font.getsize('...')[0]) <= self.length and word_counter > 1 and row_counter == self.rows:
+            elif (self.font.getsize(line + s)[0] - self.font.getsize('... ')[0]) <= self.length and word_counter > 1 and row_counter == self.rows:
                 line += s + ' '
                 word_counter -= 1
-            elif (self.font.getsize(line + s)[0] - self.font.getsize('...')[0]) > self.length and word_counter > 1 and row_counter == self.rows:
+            elif (self.font.getsize(line + s)[0] - self.font.getsize('... ')[0]) > self.length and word_counter > 1 and row_counter == self.rows:
                 line = line[0:-1] + '...'
                 word_counter = 0
                 yield line
+                break
             # something wrong with the logic
             else:
                 yield line
                 if word_counter == 1:
                     yield s   # last word
-
+                    word_counter = 0
 n = 550
-summary = WordProccessing(n, rows, f_path, summary_font_size)
-title = WordProccessing(n, rows, f_path, title_font_size)
+summary = WordProccessing(n, summary_rows, f_path, summary_font_size)
+title = WordProccessing(n, title_rows, f_path, title_font_size)
 
 def build_source(NewsFeed, title, summary, entry_number):
     data = list()
     news = dict()
-    for i in range(0, int(entry_number)):
+    for i in range(0, entry_number):
         news['head'] = NewsFeed.feed['title']
         news['logo'] = logo
         entry = NewsFeed.entries[i]
@@ -138,7 +144,7 @@ def build_source(NewsFeed, title, summary, entry_number):
                 page = requests.get(entry[k])
                 tree = html.fromstring(page.content)
 
-                for m in tree.xpath('//meta[@property="og:image"]'):
+                for m in tree.xpath(img_path):
                     img_url = m.get("content")
                     file1 = working_dir + 'image' + str(i)
                     file2 = working_dir + 'image' + str(i) + '.bmp'
@@ -195,7 +201,7 @@ def create_svg(news, filename):
     # title
     n = 210
     for s in reversed(list(news['title'])):
-        svg_file.write('<text style="text-anchor:start;" font-size="' + title_font_size + 'px" x="20" y="' + str(n) + '">')
+        svg_file.write('<text style="text-anchor:start;" font-size="' + str(title_font_size) + 'px" x="20" y="' + str(n) + '">')
 
         # fix graphics processing bug
         s = re.sub('^\'', '\'\'', s)
@@ -205,15 +211,15 @@ def create_svg(news, filename):
         n -= 50
 
     # published
-    n = 275
+    n = 275 if summary_rows == 3 else 260
     svg_file.write('<text style="text-anchor:start;" font-weight="bold" font-size="30px" x="20" y="' + str(n) + '">')
     svg_file.write(news['published'])
     svg_file.write('</text>\n')
 
     # summary
-    n = 340
+    n = 340 if summary_rows == 3 else 310
     for s in news['summary']:
-        svg_file.write('<text style="text-anchor:start;" font-size="' + summary_font_size + 'px" x="25" y="' + str(n) + '">')
+        svg_file.write('<text style="text-anchor:start;" font-size="' + str(summary_font_size) + 'px" x="25" y="' + str(n) + '">')
 
         # fix graphics processing bug
         s = re.sub('^\'', '\'\'', s)
@@ -232,8 +238,8 @@ def create_svg(news, filename):
     svg_file.write('</svg>')
     svg_file.close()
 
-
 news_data = build_source(NewsFeed, title, summary, entry_number)
+
 
 # image processing
 
@@ -252,10 +258,6 @@ for news in news_data:
     output = Popen(args)
     i += 1
 
-
-#gm convert -size 600x800 -background white -depth 8 -resize 600x800 \
-#    -colorspace gray -type palette -geometry 600x800 \
-#    $OUTPUT_DIR/ieroStation.svg $OUTPUT_DIR/kindleStation.png
 
 # create control file
 control_file = working_dir2 + 'control.env'
