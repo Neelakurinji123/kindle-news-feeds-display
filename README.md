@@ -1,6 +1,6 @@
 # kindle-news-feeds-display
  
-This repo is display bbc news feeds on old kindle 3
+This repo is display bbc & cnn news feeds on old kindle 3
 
 ### Screenshot
 <img src="screenshot.jpg" width="300" alt="Kindle 3 screenshot" />
