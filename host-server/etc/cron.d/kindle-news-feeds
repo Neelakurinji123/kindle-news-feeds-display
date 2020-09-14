@@ -1,1 +1,7 @@
-15,45 * * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh"
+#15,45 * * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh"
+15 * * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh"
+45 * * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh settings-cnn-World.xml"
+51 */2 * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh settings-bbc-business.xml"
+51 1-23/2 * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh settings-cnn-Money.xml"
+21 */2 * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh settings-cnn-football.xml"
+21 1-23/2 * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh settings-cnn-Entertainment.xml"

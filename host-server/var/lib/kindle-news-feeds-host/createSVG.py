@@ -49,11 +49,12 @@ for service in root.findall('service'):
         repeat = service.find('repeat').text
         display_reset = service.find('display_reset').text
 
+
 # font path
 fonts = fontconfig.query(family=font,lang='en')
 for i in range(0, len(fonts)):
     if fonts[i].style[0][1] == 'Regular':
-        f_path = fonts[i].file
+        font_path = fonts[i].file
 
 
 # parse template file
@@ -82,7 +83,6 @@ class WordProccessing:
 
         # remove a garbage
         val = re.sub('<.*$', '', val)
-        print('test', val)
 
         for s in re.split(" +", val):
             words += [s]
@@ -90,38 +90,40 @@ class WordProccessing:
         row = 0
         row_counter = 1
         line = str()
-        word_counter = len(words)
+        # = len(words)
 
-        for s in words:
-            if self.font.getsize(line + s)[0] <= self.length and word_counter == 1:
+        for i, s in enumerate(words, 1):
+            if self.font.getsize(line + s)[0] <= self.length and len(words) == i:
                 line += s
-                word_counter = 0
                 yield line
-            elif self.font.getsize(line + s)[0] <= self.length and word_counter > 1 and row_counter < self.rows:
+            elif self.font.getsize(line + s)[0] <= self.length and len(words) > i and row_counter < self.rows:
                 line += s + ' '
-                word_counter -= 1
-            elif self.font.getsize(line + s)[0] > self.length and word_counter > 1 and row_counter < self.rows:
-                word_counter -= 1
+            elif self.font.getsize(line + s)[0] > self.length and len(words) > i and row_counter < self.rows:
                 row_counter += 1
                 yield line[0:-1]
                 line = s + ' '
-            elif (self.font.getsize(line + s)[0] - self.font.getsize('... ')[0]) <= self.length and word_counter > 1 and row_counter == self.rows:
+            elif self.font.getsize(line + s)[0] > self.length and len(words) == i and row_counter < self.rows:
+                yield line[0:-1]
+                yield s
+            elif ((self.font.getsize(line + s)[0] - self.font.getsize('... ')[0]) <= self.length and
+                      len(words) > i and row_counter == self.rows):
                 line += s + ' '
-                word_counter -= 1
-            elif (self.font.getsize(line + s)[0] - self.font.getsize('... ')[0]) > self.length and word_counter > 1 and row_counter == self.rows:
+            elif (self.font.getsize(line + s)[0] <= self.length and
+                     (self.font.getsize(line + s)[0] + self.font.getsize('... ')[0]) > self.length and
+                     len(words) >= i and row_counter == self.rows):
                 line = line[0:-1] + '...'
-                word_counter = 0
                 yield line
                 break
-            # something wrong with the logic
-            else:
+            elif (self.font.getsize(line + s)[0] > self.length and
+                     (self.font.getsize(line + s)[0] - self.font.getsize('... ')[0]) > self.length and
+                     len(words) >= i and row_counter == self.rows):
+                line = line[0:-1] + '...'
                 yield line
-                if word_counter == 1:
-                    yield s   # last word
-                    word_counter = 0
+                break
+
 n = 550
-summary = WordProccessing(n, summary_rows, f_path, summary_font_size)
-title = WordProccessing(n, title_rows, f_path, title_font_size)
+summary = WordProccessing(n, summary_rows, font_path, summary_font_size)
+title = WordProccessing(n, title_rows, font_path, title_font_size)
 
 def build_source(NewsFeed, title, summary, entry_number):
     data = list()
