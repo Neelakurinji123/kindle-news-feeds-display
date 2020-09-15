@@ -105,18 +105,22 @@ class WordProccessing:
             elif self.font.getsize(line + s)[0] > self.length and len(words) == i and row_counter < self.rows:
                 yield line[0:-1]
                 yield s
-            elif ((self.font.getsize(line + s)[0] - self.font.getsize('... ')[0]) <= self.length and
+            elif ((self.font.getsize(line + s)[0] + self.font.getsize('...')[0]) <= self.length and
                       len(words) > i and row_counter == self.rows):
                 line += s + ' '
             elif (self.font.getsize(line + s)[0] <= self.length and
-                     (self.font.getsize(line + s)[0] + self.font.getsize('... ')[0]) > self.length and
-                     len(words) >= i and row_counter == self.rows):
+                     (self.font.getsize(line + s)[0] + self.font.getsize('...')[0]) > self.length and
+                     len(words) > i and row_counter == self.rows):
                 line = line[0:-1] + '...'
                 yield line
                 break
+            elif (self.font.getsize(line + s)[0] <= self.length and
+                     len(words) == i and row_counter == self.rows):
+                line += s
+                yield line
+                break
             elif (self.font.getsize(line + s)[0] > self.length and
-                     (self.font.getsize(line + s)[0] - self.font.getsize('... ')[0]) > self.length and
-                     len(words) >= i and row_counter == self.rows):
+                     len(words) == i and row_counter == self.rows):
                 line = line[0:-1] + '...'
                 yield line
                 break
