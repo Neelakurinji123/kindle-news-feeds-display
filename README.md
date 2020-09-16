@@ -120,8 +120,15 @@ Edit settings.xml
 If enable dark mode, edit display.xml.
 Note: getting sunrise and sunset data from an external url:  https://api.sunrise-sunset.org
 ```
+<dark_mode>
 True: dark mode
 False or None: light mode
 Auto: automatic switch between light mode and dark mode according to the time of sunrise and sunset
+
+<lat>
+latitude
+
+<lng>
+longitude
 ```
 <img src="sample_images/cnn-world-dark-mode.png" width="300" alt="kindle news feeds - dark mode" />
