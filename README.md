@@ -118,6 +118,7 @@ Edit settings.xml
 
 ### dark mode
 If enable dark mode, edit display.xml.
+Note: getting sunrise and sunset data from an external url:  https://api.sunrise-sunset.org
 ```
 True: dark mode
 False or None: light mode
