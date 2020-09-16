@@ -113,5 +113,14 @@ This repo is display bbc & cnn news feeds on old kindle 3
     fc-cache -v -f
 ```
 
-## setting
+### setting
 Edit settings.xml
+
+### dark mode
+If enable dark mode, edit display.xml.
+```
+True: dark mode
+False or None: light mode
+Auto: automatic switch between light mode and dark mode according to the time of sunrise and sunset
+```
+<img src="sample_images/cnn-world-dark-mode.png" width="300" alt="kindle news feeds - dark mode" />
