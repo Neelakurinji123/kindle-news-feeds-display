@@ -16,6 +16,8 @@ from html.parser import HTMLParser
 from xml.dom import minidom
 import fontconfig
 from PIL import ImageFont
+from datetime import datetime, timezone
+import setDaytime
 
 # working directory
 working_dir = '/tmp/wk_images/'
@@ -49,13 +51,11 @@ for service in root.findall('service'):
         repeat = service.find('repeat').text
         display_reset = service.find('display_reset').text
 
-
 # font path
 fonts = fontconfig.query(family=font,lang='en')
 for i in range(0, len(fonts)):
     if fonts[i].style[0][1] == 'Regular':
         font_path = fonts[i].file
-
 
 # parse template file
 template_file='template/' + template + '.xml'
@@ -71,6 +71,31 @@ image = root.find('image')
 img_path = image.find('img_path').text
 
 NewsFeed = feedparser.parse(url)
+
+# dark mode
+tree = ET.parse('display.xml')
+root = tree.getroot()
+for service in root.findall('service'):
+    if service.get('name') == 'display':
+        dark_mode = service.find('dark_mode').text
+        if dark_mode == 'Auto':
+            dat_file = '/tmp/daytime.dat'
+            t_now = int(datetime.now().timestamp())
+            if os.path.isfile(dat_file) == False:
+                setDaytime.jsonfile()
+            elif (os.stat(dat_file)[8] // 86400) != (t_now // 86400):
+                setDaytime.jsonfile()
+
+            with open(dat_file) as json_file:
+                d = json.load(json_file)
+                sunrise = datetime.strptime(d['results']['sunrise'], "%Y-%m-%dT%H:%M:%S+00:00")
+                sunset = datetime.strptime(d['results']['sunset'], "%Y-%m-%dT%H:%M:%S+00:00")
+                t_sunrise = int(datetime.timestamp(sunrise))
+                t_sunset = int(datetime.timestamp(sunset))
+                if t_sunrise > t_now or t_sunset < t_now:
+                    dark_mode = 'True'
+                else:
+                    dark_mode = 'False'
 
 class WordProccessing:
     def __init__(self, length, rows, f_path, f_size):
@@ -163,8 +188,13 @@ def build_source(NewsFeed, title, summary, entry_number):
                     file4 = working_dir + 'image' + str(i) + '.png'
                     args1 = ['wget', '-q', img_url, '-O', file1]
                     args2 = ['convert', '-enhance', '-equalize', '-contrast', '-resize', '600x', file1, file2]
-                    args3 = ['potrace', '--svg', file2, '-o', file3]
-                    args4 = ['convert',  '-size', '600x', '-background', 'white', '-depth', '8' ,file3, file4]
+
+                    if dark_mode == 'True':
+                        args3 = ['potrace', '-i', '--svg', file2, '-o', file3]
+                    else:
+                        args3 = ['potrace', '--svg', file2, '-o', file3]
+
+                    args4 = ['gm', 'convert',  '-size', '600x', '-background', 'white', '-depth', '8' ,file3, file4]
 
                     output = Popen(args1)
                     time.sleep(5)
@@ -184,7 +214,6 @@ def build_source(NewsFeed, title, summary, entry_number):
         news = dict()
 
     return data
-
 
 
 # Create SVG file
@@ -264,9 +293,15 @@ for news in news_data:
     output_file = working_dir2 + 'entry' + str(i) + '.png'
     create_svg(news, filename)
 
-    #args = ['convert', '-size', '600x800',  '-background', 'white', '-depth', '8', filename, output_file]
-    args = ['gm', 'convert', '-size', '600x800', '-background', 'white', '-depth', '8', '-resize', '600x800', '-colorspace', 'gray', '-type', 'palette', '-geometry', '600x800', filename, output_file]
-    output = Popen(args)
+    if dark_mode == 'True':
+        #args = ['convert', '-size', '600x800',  '-background', 'white', '-depth', '8', '-negate', filename, output_file]
+        args = ['gm', 'convert', '-size', '600x800', '-background', 'white', '-depth', '8', '-resize', '600x800', '-colorspace', 'gray', '-type', 'palette', '-geometry', '600x800', '-negate', filename, output_file]
+        output = Popen(args)
+    else:
+        #args = ['convert', '-size', '600x800',  '-background', 'white', '-depth', '8', filename, output_file]
+        args = ['gm', 'convert', '-size', '600x800', '-background', 'white', '-depth', '8', '-resize', '600x800', '-colorspace', 'gray', '-type', 'palette', '-geometry', '600x800', filename, output_file]
+        output = Popen(args)
+
     i += 1
 
 

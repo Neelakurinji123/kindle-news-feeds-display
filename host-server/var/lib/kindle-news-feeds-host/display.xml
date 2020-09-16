@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<data>
+	<service name="display">
+		<dark_mode>False</dark_mode>
+                <url>https://api.sunrise-sunset.org/json?</url>
+		<lat>35.8034315</lat>
+		<lng>139.4275599</lng>
+	</service>
+</data>
