@@ -36,6 +36,8 @@ This repo is display bbc & cnn news feeds on old kindle 3
     apt install python3-feedparser python3-lxml python3-pil python3-pip \
     python3-requests python3-wheel python3-fontconfig python3-setuptools \
     python3-astral
+    
+    pip3 nstall pytz
 
     image processors:
     apt install imagemagick imagemagick-6-common imagemagick-6.q16 \
