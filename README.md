@@ -34,7 +34,8 @@ This repo is display bbc & cnn news feeds on old kindle 3
 
     python modules:
     apt install python3-feedparser python3-lxml python3-pil python3-pip \
-    python3-requests python3-wheel python3-fontconfig python3-setuptools
+    python3-requests python3-wheel python3-fontconfig python3-setuptools \
+    python3-astral
 
     image processors:
     apt install imagemagick imagemagick-6-common imagemagick-6.q16 \
@@ -118,7 +119,6 @@ Edit settings.xml
 
 ### dark mode
 If enable dark mode, edit display.xml.
-Note: getting sunrise and sunset data from an external url:  https://api.sunrise-sunset.org
 ```
 <dark_mode>
 True: dark mode
@@ -130,5 +130,8 @@ latitude
 
 <lng>
 longitude
+
+<timezone>
+tz database name
 ```
 <img src="sample_images/cnn-world-dark-mode.png" width="300" alt="kindle news feeds - dark mode" />
