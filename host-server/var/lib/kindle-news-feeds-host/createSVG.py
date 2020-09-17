@@ -16,9 +16,9 @@ from html.parser import HTMLParser
 from xml.dom import minidom
 import fontconfig
 from PIL import ImageFont
-from datetime import datetime, timezone, date
+from datetime import datetime, date
+import pytz
 import astral
-import setDaytime
 
 # working directory
 working_dir = '/tmp/wk_images/'
@@ -82,7 +82,8 @@ for service in root.findall('service'):
         dark_mode = service.find('dark_mode').text
         lat = float(service.find('lat').text)
         lng = float(service.find('lng').text)
-        timezone = service.find('timezone').text
+        t_timezone = service.find('timezone').text
+        offset = int(datetime.now(pytz.timezone(t_timezone)).strftime('%z')) / 100
         if dark_mode == 'Auto':
             t_now = int(datetime.now().timestamp())
             loc = astral.Location(('', '', lat, lng, 'GMT+0'))
@@ -92,6 +93,9 @@ for service in root.findall('service'):
                 elif event == 'sunset':
                     t_sunset = int(datetime.timestamp(time))
 
+            t_now = (t_now + offset * 3600) % 86400
+            t_sunrise = (t_sunrise + offset * 3600) % 86400
+            t_sunset = (t_sunset + offset * 3600) % 86400
             if t_sunrise > t_now or t_sunset < t_now:
                 dark_mode = 'True'
             else:
