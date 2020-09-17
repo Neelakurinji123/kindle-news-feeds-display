@@ -3,7 +3,7 @@
 # -*- coding: utf-8 -*-
 
 import json
-import time
+import time as t
 import os
 import sys
 import re
@@ -16,7 +16,8 @@ from html.parser import HTMLParser
 from xml.dom import minidom
 import fontconfig
 from PIL import ImageFont
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
+import astral
 import setDaytime
 
 # working directory
@@ -72,30 +73,30 @@ img_path = image.find('img_path').text
 
 NewsFeed = feedparser.parse(url)
 
+
 # dark mode
 tree = ET.parse('display.xml')
 root = tree.getroot()
 for service in root.findall('service'):
     if service.get('name') == 'display':
         dark_mode = service.find('dark_mode').text
+        lat = float(service.find('lat').text)
+        lng = float(service.find('lng').text)
+        timezone = service.find('timezone').text
         if dark_mode == 'Auto':
-            dat_file = '/tmp/daytime.dat'
             t_now = int(datetime.now().timestamp())
-            if os.path.isfile(dat_file) == False:
-                setDaytime.jsonfile()
-            elif (os.stat(dat_file)[8] // 86400) != (t_now // 86400):
-                setDaytime.jsonfile()
+            loc = astral.Location(('', '', lat, lng, 'GMT+0'))
+            for event, time in loc.sun(date.today()).items():
+                if event == 'sunrise':
+                    t_sunrise = int(datetime.timestamp(time))
+                elif event == 'sunset':
+                    t_sunset = int(datetime.timestamp(time))
 
-            with open(dat_file) as json_file:
-                d = json.load(json_file)
-                sunrise = datetime.strptime(d['results']['sunrise'], "%Y-%m-%dT%H:%M:%S+00:00")
-                sunset = datetime.strptime(d['results']['sunset'], "%Y-%m-%dT%H:%M:%S+00:00")
-                t_sunrise = int(datetime.timestamp(sunrise))
-                t_sunset = int(datetime.timestamp(sunset))
-                if t_sunrise > t_now or t_sunset < t_now:
-                    dark_mode = 'True'
-                else:
-                    dark_mode = 'False'
+            if t_sunrise > t_now or t_sunset < t_now:
+                dark_mode = 'True'
+            else:
+                dark_mode = 'False'
+
 
 class WordProccessing:
     def __init__(self, length, rows, f_path, f_size):
@@ -197,11 +198,11 @@ def build_source(NewsFeed, title, summary, entry_number):
                     args4 = ['gm', 'convert',  '-size', '600x', '-background', 'white', '-depth', '8' ,file3, file4]
 
                     output = Popen(args1)
-                    time.sleep(5)
+                    t.sleep(5)
                     output = Popen(args2)
-                    time.sleep(5)
+                    t.sleep(5)
                     output = Popen(args3)
-                    time.sleep(5)
+                    t.sleep(5)
                     output = Popen(args4)
 
                     doc = minidom.parse(file3)
