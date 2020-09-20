@@ -104,7 +104,7 @@ This repo is display bbc & cnn news feeds on old kindle 3
     apt install shorewall
     
     EDIT: /etc/shorewall/interfaces
-    select the right interface
+    choose the right interface
     
     ntp server:
     apt install ntp
