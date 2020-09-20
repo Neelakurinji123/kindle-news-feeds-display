@@ -26,7 +26,7 @@ if os.path.isdir(working_dir) == False: os.makedirs(working_dir)
 
 # parse settings file
 
-# if using custom settings.xml, add a setting file on the commandline.
+# if using custom settings.xml
 if len(sys.argv) > 1:
     params_file = sys.argv[1]
 else:
@@ -135,13 +135,13 @@ class WordProccessing:
             elif self.font.getsize(line + s)[0] > self.length and len(words) == i and row_counter < self.rows:
                 yield line[0:-1]
                 yield s
-            elif ((self.font.getsize(line + s)[0] + self.font.getsize('...')[0]) <= self.length and
+            elif ((self.font.getsize(line + s)[0] + self.font.getsize(' ...')[0]) <= self.length and
                       len(words) > i and row_counter == self.rows):
                 line += s + ' '
             elif (self.font.getsize(line + s)[0] <= self.length and
-                     (self.font.getsize(line + s)[0] + self.font.getsize('...')[0]) > self.length and
+                     (self.font.getsize(line + s)[0] + self.font.getsize(' ...')[0]) > self.length and
                      len(words) > i and row_counter == self.rows):
-                line = line[0:-1] + '...'
+                line = line[0:-1] + ' ...'
                 yield line
                 break
             elif (self.font.getsize(line + s)[0] <= self.length and
@@ -151,7 +151,7 @@ class WordProccessing:
                 break
             elif (self.font.getsize(line + s)[0] > self.length and
                      len(words) == i and row_counter == self.rows):
-                line = line[0:-1] + '...'
+                line = line[0:-1] + ' ...'
                 yield line
                 break
 
