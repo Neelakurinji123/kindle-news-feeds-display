@@ -137,3 +137,9 @@ longitude
 tz database name
 ```
 <img src="sample_images/cnn-world-dark-mode.png" width="300" alt="kindle news feeds - dark mode" />
+
+### italic
+To enable italic text in summary, edit settings.xml.
+````
+<italic>True</italic>
+````
