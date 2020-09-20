@@ -41,6 +41,8 @@ for service in root.findall('service'):
         category = service.find('category').text
         encoding = service.find('encoding').text
         font = service.find('font').text
+        italic_font = service.find('italic_font').text
+        italic = service.find('italic').text
         title_font_size = int(service.find('title_font_size').text)
         summary_font_size = int(service.find('summary_font_size').text)
         title_rows = int(service.find('title_rows').text)
@@ -57,6 +59,11 @@ fonts = fontconfig.query(family=font,lang='en')
 for i in range(0, len(fonts)):
     if fonts[i].style[0][1] == 'Regular':
         font_path = fonts[i].file
+
+fonts = fontconfig.query(family=italic_font,lang='en')
+for i in range(0, len(fonts)):
+    if fonts[i].style[0][1] == 'Oblique':
+        italic_font_path = fonts[i].file
 
 # parse template file
 template_file='template/' + template + '.xml'
@@ -156,7 +163,11 @@ class WordProccessing:
                 break
 
 n = 550
-summary = WordProccessing(n, summary_rows, font_path, summary_font_size)
+if italic == 'True':
+    summary = WordProccessing(n, summary_rows, italic_font_path, summary_font_size)
+else:
+    summary = WordProccessing(n, summary_rows, font_path, summary_font_size)
+
 title = WordProccessing(n, title_rows, font_path, title_font_size)
 
 def build_source(NewsFeed, title, summary, entry_number):
@@ -173,11 +184,13 @@ def build_source(NewsFeed, title, summary, entry_number):
                 entry[k] = entry[k].replace("\"", "\'\'")
                 entry[k] = entry[k].replace(u"\u2018", "\'")
                 entry[k] = entry[k].replace(u"\u2019", "\'")
+                entry[k] = entry[k].replace(u"\u2014", "--")
                 news['summary'] = summary.proccessing(entry[k])
             elif k == 'title':
                 entry[k] = entry[k].replace("\"", "\'\'")
                 entry[k] = entry[k].replace(u"\u2018", "\'")
                 entry[k] = entry[k].replace(u"\u2019", "\'")
+                entry[k] = entry[k].replace(u"\u2014", "--")
                 news['title'] = title.proccessing(entry[k])
             elif k == 'published':
                 news['published'] = entry[k]
@@ -264,7 +277,8 @@ def create_svg(news, filename):
     # summary
     n = 340 if summary_rows == 3 else 310
     for s in news['summary']:
-        svg_file.write('<text style="text-anchor:start;" font-size="' + str(summary_font_size) + 'px" x="25" y="' + str(n) + '">')
+        a = 'font-style="italic" font-weight="normal"' if italic == 'True' else ''
+        svg_file.write('<text style="text-anchor:start;" ' + a + ' font-size="' + str(summary_font_size) + 'px" x="25" y="' + str(n) + '">')
 
         # fix graphics processing bug
         s = re.sub('^\'', '\'\'', s)

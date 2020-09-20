@@ -5,6 +5,8 @@
                 <category>technology</category>
                 <encoding>iso-8859-1</encoding>
 		<font>Droid Sans</font>
+		<italic_font>DejaVu Sans</italic_font>
+		<italic>True</italic>
 		<title_font_size>40</title_font_size>
 		<summary_font_size>30</summary_font_size>
 		<title_rows>3</title_rows>
