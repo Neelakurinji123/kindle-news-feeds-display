@@ -181,15 +181,17 @@ def build_source(NewsFeed, title, summary, entry_number):
             if k == 'summary':
 
                 # hmm, tricky problem...
-                entry[k] = entry[k].replace("\"", "\'\'")
-                entry[k] = entry[k].replace(u"\u2018", "\'")
-                entry[k] = entry[k].replace(u"\u2019", "\'")
-                entry[k] = entry[k].replace(u"\u2014", "--")
+                entry[k] = entry[k].replace("\"", "\'\'")       # Double Quotation Mark
+                entry[k] = entry[k].replace(u"\u2018", "\'")    # Left Single Quotation Mark
+                entry[k] = entry[k].replace(u"\u2019", "\'")    # Right Single Quotation Mark
+                entry[k] = entry[k].replace(u"\u2013", "-")     # En Dash
+                entry[k] = entry[k].replace(u"\u2014", "--")    # Em Dash
                 news['summary'] = summary.proccessing(entry[k])
             elif k == 'title':
                 entry[k] = entry[k].replace("\"", "\'\'")
                 entry[k] = entry[k].replace(u"\u2018", "\'")
                 entry[k] = entry[k].replace(u"\u2019", "\'")
+                entry[k] = entry[k].replace(u"\u2013", "-")
                 entry[k] = entry[k].replace(u"\u2014", "--")
                 news['title'] = title.proccessing(entry[k])
             elif k == 'published':
@@ -205,14 +207,14 @@ def build_source(NewsFeed, title, summary, entry_number):
                     file3 = working_dir + 'image' + str(i) + '.svg'
                     file4 = working_dir + 'image' + str(i) + '.png'
                     args1 = ['wget', '-q', img_url, '-O', file1]
-                    args2 = ['convert', '-enhance', '-equalize', '-contrast', '-resize', '600x', file1, file2]
+                    args2 = ['convert', '-enhance', '-equalize', '-contrast', '-resize', '600x338!', file1, file2]
 
                     if dark_mode == 'True':
                         args3 = ['potrace', '-i', '--svg', file2, '-o', file3]
                     else:
                         args3 = ['potrace', '--svg', file2, '-o', file3]
 
-                    args4 = ['gm', 'convert',  '-size', '600x', '-background', 'white', '-depth', '8' ,file3, file4]
+                    args4 = ['gm', 'convert',  '-size', '600x!', '-background', 'white', '-depth', '8' ,file3, file4]
 
                     output = Popen(args1)
                     t.sleep(5)
