@@ -18,7 +18,7 @@ if [ -f /mnt/us/kindle-weather/enable ]; then
     wget -q http://192.168.2.1:8080/news_feeds.tar -O /www/news_feeds.tar
 
     [ -d /www/news-feeds ] || mkdir -p /www/news-feeds
-    [ -f /www/news-feeds/control.env ] && rm -rf /www/news-feeds
+    [ -f /www/news-feeds/control.env ] && rm -rf /www/news-feeds/*
 
     tar xf /www/news_feeds.tar -C /www/news-feeds
 
