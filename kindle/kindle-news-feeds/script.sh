@@ -2,11 +2,11 @@
 
 cd "$(dirname "$0")"
 
-pidof powerd >/dev/null
-if [ $? -eq 0 ]; then
-    /etc/init.d/powerd stop
-    /etc/init.d/framework stop
-fi
+#pidof powerd >/dev/null
+#if [ $? -eq 0 ]; then
+#    /etc/init.d/powerd stop
+#    /etc/init.d/framework stop
+#fi
 
 rm -f /www/news_feeds.tar
 wget -q http://192.168.2.1:8080/news_feeds.tar -O /www/news_feeds.tar
