@@ -2,7 +2,7 @@
 
 cd "$(dirname "$0")"
 
-if [ -f /mnt/us/kindle-weather/enable ]; then
+if [ -f /mnt/us/kindle-news-feeds/enable ]; then
 
     if [ "`pidof powerd`" != '' ]; then
         /etc/init.d/powerd stop
