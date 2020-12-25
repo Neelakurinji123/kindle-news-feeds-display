@@ -8,22 +8,22 @@ if [ $? -eq 0 ]; then
     /etc/init.d/framework stop
 fi
 
-rm -f /tmp/news_feeds.tar
-wget -q http://192.168.2.1:8080/news_feeds.tar -O /tmp/news_feeds.tar
+rm -f /www/news_feeds.tar
+wget -q http://192.168.2.1:8080/news_feeds.tar -O /www/news_feeds.tar
 
-[ -d /tmp/news-feeds ] || mkdir -p /tmp/news-feeds
-[ -f /tmp/news-feeds/control.env ] && rm /tmp/news-feeds/*
+[ -d /www/news-feeds ] || mkdir -p /www/news-feeds
+[ -f /www/news-feeds/control.env ] && rm -rf /www/news-feeds
 
-tar xf /tmp/news_feeds.tar -C /tmp/news-feeds
+tar xf /www/news_feeds.tar -C /www/news-feeds
 
-. /tmp/news-feeds/control.env
+. /www/news-feeds/control.env
 
 run()
 {
     count=0
     while [ $count -lt $repeat ]; do
         count=`expr $count + 1`
-        for n in `echo /tmp/news-feeds/entry*.png`; do
+        for n in `echo /www/news-feeds/entry*.png`; do
             eips -g $n
             sleep $duration_time
             if [ $display_reset = 'True' ]; then
@@ -36,7 +36,7 @@ run()
 }
 
 eips -c
-if [ -f '/tmp/news-feeds/entry0.png' ]; then
+if [ -f '/www/news-feeds/entry0.png' ]; then
     run
 else
     eips -g error.png
