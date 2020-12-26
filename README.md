@@ -8,27 +8,68 @@ This repo is display bbc & cnn news feeds on old kindle 3
 ## Setup
 ### kindle
 1. jailbreak your Kindle
-2. copy kindle/kindle-weather to /mnt/us folder
-3. create a directory: mntroot rw; mkdir /www; mntroot ro
+2. access to kindle via usbnet:
+```
+ip a add 192.16.2.1/24 dev usb0
+ip link set usb0 up
+ssh root@192.168.2.2 (no password)
+```
+3. create a directory and mount tmpfs:
+```
+mntroot rw
+mkdir /www
+mount -t tmpfs tmpfs /www
+mntroot ro
+```
+4. copy kindle/kindle-news-feeds and kindle/launchpad to /mnt/us folder:
+```
+scp kindle/kkindle-news-feeds kindle/launchpad root@192.168.2.2:/tmp
+ssh root@192.168.2.2 (no password)
+mv /tmp/kindle-news-feeds /mnt/us
+mv /tmp/launchpad/* mnt/us/launchpad
+```
+3. create a directory:
+```
+mntroot rw
+mkdir /www
+mount -t tmpfs tmpfs /www
+mntroot ro
+```
 4. edit /etc/fstab: 
 ```
 tmpfs             /www          tmpfs  defaults,size=16m 0 0
 ```
-5. setup cron
-6. setup usbnet: rename to /mnt/us/usbnet/auto
-7. optionally install kindle-debian, system can improve
+5. create a file
+```
+touch /mnt/us/kindle-news-feeds/enable
+```
+6. edit /etc/fstab: 
+```
+tmpfs             /www          tmpfs  defaults,size=16m 0 0
+```
+7. setup cron: (example)
+```
+/etc/crontab/root
+20,25,50,55 * * * * sh /mnt/us/kindle-news-feeds/script.sh
+```
+8. setup usbnet:
+```
+cd /mnt/us/usbnet
+cp DISABLED_auto auto
+mv DISABLED_auto DISABLED_auto.orig
+```
+9. disable kindle
+```
+/etc/init.d/powerd stop
+/etc/init.d/framework stop
+```
+10. optionally install kindle-debian, system can improve
 
 ### server
 1. get free subscription plan from openweathermap.org
-2. setup usbnet
-3. copy host-server/var/lib/kindle-weather-host to /var/lib folder
-4. install packages and setup (eg. debian buster)
-5. install python3 modules: feedparser, requests, lxml
-6. setup font
-7. setup cron
-
+2. setup usbnet:
 ```
-    usbnet: /etc/network/interfaces
+usbnet: /etc/network/interfaces
     
     auto usb0
       iface usb0 inet static
@@ -36,14 +77,13 @@ tmpfs             /www          tmpfs  defaults,size=16m 0 0
       netmask 255.255.255.0
       broadcast 192.168.2.255
       network 192.168.2.0
-
-    python modules:
-    apt install python3-feedparser python3-lxml python3-pil python3-pip \
-    python3-requests python3-wheel python3-fontconfig python3-setuptools \
-    python3-astral
-    
-    pip3 nstall pytz
-
+```
+3. copy kindle-weather-host to server:
+```
+cp -a host-server/var/lib/kindle-weather-host /var/lib
+```
+4. install packages and setup: (eg. debian buster)
+```
     image processors:
     apt install imagemagick imagemagick-6-common imagemagick-6.q16 \
       imagemagick-common libgraphicsmagick-q16-3 libmagickcore-6.q16-6 \
@@ -113,12 +153,33 @@ tmpfs             /www          tmpfs  defaults,size=16m 0 0
     
     ntp server:
     apt install ntp
+```
+5. install python3 modules: feedparser, requests, lxml
+```
+apt install python3-feedparser python3-lxml python3-pil python3-pip \
+  python3-requests python3-wheel python3-fontconfig python3-setuptools \
+  python3-astral
+    
+pip3 install pytz
+```
+6. setup font:
+```
+apt install fontconfig
 
-    font:
-    apt install fontconfig
+extract a ttf archive and copy ttf fonts to /root/.fonts folder
 
-    extract a ttf archive and copy ttf fonts to /root/.fonts folder
-    fc-cache -v -f
+fc-cache -v -f
+```
+7. setup cron: (example)
+```
+/etc/cron.d/kindle-news-feeds
+
+15 * * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh"
+21 */2 * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh settings-bbc-business.xml"
+21 1-23/2 * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh settings-bbc-technology.xml"
+45 * * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh settings-cnn-World.xml"
+51 */2 * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh settings-cnn-football.xml"
+51 1-23/2 * * * root sh -c "/var/lib/kindle-news-feeds-host/kindle-news-feeds.sh settings-cnn-Entertainment.xml"
 ```
 
 ### setting
