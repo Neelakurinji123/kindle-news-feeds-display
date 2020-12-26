@@ -154,8 +154,10 @@ pip3 install pytz
 ```
 apt install fontconfig
 
-extract a ttf archive and copy ttf fonts to /root/.fonts folder
-
+extract from a font archive and copy ttf fonts to /root/.fonts folder:
+unzip Delicious.zip
+mkdir -p /root/.fonts
+mv Delicious /root/.fonts
 fc-cache -v -f
 ```
 6. setup cron: (example)
