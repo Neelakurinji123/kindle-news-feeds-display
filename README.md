@@ -28,17 +28,6 @@ ssh root@192.168.2.2 (no password)
 mv /tmp/kindle-news-feeds /mnt/us
 mv /tmp/launchpad/* mnt/us/launchpad
 ```
-3. create a directory:
-```
-mntroot rw
-mkdir /www
-mount -t tmpfs tmpfs /www
-mntroot ro
-```
-4. edit /etc/fstab: 
-```
-tmpfs             /www          tmpfs  defaults,size=16m 0 0
-```
 5. create a file
 ```
 touch /mnt/us/kindle-news-feeds/enable
