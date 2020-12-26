@@ -66,9 +66,9 @@ usbnet: /etc/network/interfaces
       broadcast 192.168.2.255
       network 192.168.2.0
 ```
-2. copy kindle-weather-host to server:
+2. copy kindle-news-feeds-host to server:
 ```
-cp -a host-server/var/lib/kindle-weather-host /var/lib
+cp -a host-server/var/lib/kindle-news-feeds-host /var/lib
 ```
 3. install packages and setup: (eg. debian buster)
 ```
