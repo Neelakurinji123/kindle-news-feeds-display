@@ -176,7 +176,7 @@ fc-cache -v -f
 Edit settings.xml
 
 ### dark mode
-If enable dark mode, edit display.xml.
+If enable dark mode, edit dark_mode, lat, lng and timezone in display.xml.
 ```
 <dark_mode>
 True: dark mode
@@ -195,7 +195,7 @@ tz database name
 <img src="sample_images/cnn-world-dark-mode.png" width="300" alt="kindle news feeds - dark mode" />
 
 ### italic
-To enable italic text in summary, edit settings.xml.
+To enable italic text in summary, edit italic in settings.xml.
 ````
 <italic>True</italic>
 ````
