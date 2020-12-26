@@ -199,3 +199,6 @@ To enable italic text in summary, edit 'italic' in settings.xml.
 ````
 <italic>True</italic>
 ````
+### stop this program
+* remove /mnt/us/kindle-weather/enable
+* use shortcut: shift, a, w
