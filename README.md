@@ -55,8 +55,7 @@ mv DISABLED_auto DISABLED_auto.orig
 10. optionally install kindle-debian, system can improve
 
 ### server
-1. get free subscription plan from openweathermap.org
-2. setup usbnet:
+1. setup usbnet:
 ```
 usbnet: /etc/network/interfaces
     
@@ -67,11 +66,11 @@ usbnet: /etc/network/interfaces
       broadcast 192.168.2.255
       network 192.168.2.0
 ```
-3. copy kindle-weather-host to server:
+2. copy kindle-weather-host to server:
 ```
 cp -a host-server/var/lib/kindle-weather-host /var/lib
 ```
-4. install packages and setup: (eg. debian buster)
+3. install packages and setup: (eg. debian buster)
 ```
     image processors:
     apt install imagemagick imagemagick-6-common imagemagick-6.q16 \
@@ -143,7 +142,7 @@ cp -a host-server/var/lib/kindle-weather-host /var/lib
     ntp server:
     apt install ntp
 ```
-5. install python3 modules: feedparser, requests, lxml
+4. install python3 modules: feedparser, requests, lxml
 ```
 apt install python3-feedparser python3-lxml python3-pil python3-pip \
   python3-requests python3-wheel python3-fontconfig python3-setuptools \
@@ -151,7 +150,7 @@ apt install python3-feedparser python3-lxml python3-pil python3-pip \
     
 pip3 install pytz
 ```
-6. setup font:
+5. setup font:
 ```
 apt install fontconfig
 
@@ -159,7 +158,7 @@ extract a ttf archive and copy ttf fonts to /root/.fonts folder
 
 fc-cache -v -f
 ```
-7. setup cron: (example)
+6. setup cron: (example)
 ```
 /etc/cron.d/kindle-news-feeds
 
